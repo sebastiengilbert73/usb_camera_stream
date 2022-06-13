@@ -1,0 +1,4 @@
+#!/bin/bash
+source /home/sebastien/projects/.venv/usb_camera_stream/bin/activate
+cd /home/sebastien/projects/usb_camera_stream
+gunicorn service:app --bind="0.0.0.0:5100" --workers=1 --worker-class=gthread --threads=4 --timeout=90
