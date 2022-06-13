@@ -16,10 +16,6 @@ def ExtractConfig(filepath):
 			config_dict['CameraID'] = int(level1_elm.text)
 		elif level1_elm.tag == 'VideoFeedName':
 			config_dict['VideoFeedName'] = level1_elm.text
-		elif level1_elm.tag == 'VideoFrameRate':
-			config_dict['VideoFrameRate'] = int(level1_elm.text)
-		elif level1_elm.tag == 'Resolution':
-			config_dict['Resolution'] = ast.literal_eval(level1_elm.text)
 		elif level1_elm.tag == 'WriteTimestamp':
 			config_dict['WriteTimestamp'] = ast.literal_eval(level1_elm.text)
 		elif level1_elm.tag == 'Flip':
