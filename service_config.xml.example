@@ -1,0 +1,9 @@
+<ServiceConfig>
+	<CameraID>1</CameraID>
+	<VideoFeedName>video</VideoFeedName>
+	<VideoFrameRate>32</VideoFrameRate>
+	<Resolution>(640, 480)</Resolution>
+	<WriteTimestamp>True</WriteTimestamp>
+	<Flip>False</Flip>
+	<StillImageName>still</StillImageName>
+</ServiceConfig>
