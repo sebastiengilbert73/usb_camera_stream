@@ -37,7 +37,10 @@ app = Flask(__name__)
 config = ExtractConfig("./service_config.xml")
 
 #video_stream = PiVideoStream(resolution=config['Resolution'], framerate=config['VideoFrameRate']).start()
-capture = cv2.VideoCapture(config['CameraID'])
+capture_is_opened = False
+while not capture_is_opened:
+	capture = cv2.VideoCapture(config['CameraID'])
+	capture_is_opened = capture.isOpened()
 
 @app.route('/')
 def index():
@@ -46,7 +49,9 @@ def index():
 def gen(vid_stream):
 	while True:
 #frame = vid_stream.read()
-		ret_val, image = capture.read()
+		while not vid_stream.isOpened():
+			vid_stream = cv2.VideoCapture(config['CameraID'])
+		ret_val, image = vid_stream.read()
 		if ret_val == True:
 			if config['Flip'] == True:
 				image = cv2.flip(image, 0)
