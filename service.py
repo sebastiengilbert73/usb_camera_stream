@@ -5,7 +5,7 @@ import cv2
 import xml.etree.ElementTree as ET
 import ast
 from datetime import datetime
-
+import time
 
 def ExtractConfig(filepath):
 	config_dict = dict()
@@ -51,6 +51,7 @@ def gen(vid_stream):
 #frame = vid_stream.read()
 		while not vid_stream.isOpened():
 			vid_stream = cv2.VideoCapture(config['CameraID'])
+			time.sleep(0.1)
 		ret_val, image = vid_stream.read()
 		if ret_val == True:
 			if config['Flip'] == True:
