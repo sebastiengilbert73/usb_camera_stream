@@ -29,7 +29,20 @@ def WriteTimestamp(image):
 	text_origin = (image.shape[1] - 400, image.shape[0] - 30)
 	cv2.putText(image, timestamp, text_origin, cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255))
 	
-
+	
+def ValidUSBCameraPaths(base_directory="/dev/v4l/by-id"):
+	filenames = os.listdir(base_directory)#[f for f in os.listdir(base_directory) ]
+	valid_camera_paths = []
+	for filename in filenames:
+		filepath = os.path.join(base_directory, filename)
+		print(f"filepath = {filepath}")
+		test_capture = cv2.VideoCapture(filepath)
+		capture_is_open = test_capture.isOpened()
+		print(f"capture_is_open = {capture_is_open}")
+		if capture_is_open:
+			valid_camera_paths.append(filepath)
+			test_capture.release()
+	return valid_camera_paths
 
 
 app = Flask(__name__)
@@ -37,10 +50,18 @@ app = Flask(__name__)
 config = ExtractConfig("./service_config.xml")
 
 #video_stream = PiVideoStream(resolution=config['Resolution'], framerate=config['VideoFrameRate']).start()
-capture_is_opened = False
+#capture_is_opened = False
+#valid_camera_indices = ValidUSBCameraIndices()
+#print(f"valid_camera_indices = {valid_camera_indices}")
+"""capture = None
 while not capture_is_opened:
-	capture = cv2.VideoCapture(config['CameraID'])
+	capture = cv2.VideoCapture(2)#valid_camera_indices[0])
 	capture_is_opened = capture.isOpened()
+	print(f"capture_is_opened = {capture_is_opened}")
+"""
+valid_camera_paths = ValidUSBCameraPaths()
+print(f"valid_camera_paths = {valid_camera_paths}")
+capture = cv2.VideoCapture(valid_camera_paths[config['CameraID']])
 
 @app.route('/')
 def index():
@@ -48,9 +69,8 @@ def index():
 	
 def gen(vid_stream):
 	while True:
-#frame = vid_stream.read()
 		while not vid_stream.isOpened():
-			vid_stream = cv2.VideoCapture(config['CameraID'])
+			vid_stream = cv2.VideoCapture(valid_camera_paths[config['CameraID']])
 			time.sleep(0.1)
 		ret_val, image = vid_stream.read()
 		if ret_val == True:
@@ -63,6 +83,8 @@ def gen(vid_stream):
 			image = jpeg.tobytes()
 			yield(b'--frame\r\n'
 				b'Content-Type: image/jpeg\r\n\r\n' + image + b'\r\n\r\n')
+		else:
+			print(f"gen(): vid_stream.read() returned ret_val = False")
 		      
 @app.route(f"/{config['VideoFeedName']}")
 def video_feed():
@@ -71,7 +93,6 @@ def video_feed():
 
 @app.route(f"/{config['StillImageName']}")
 def still_capture():
-	#frame = video_stream.read()
 	ret_val, image = capture.read()
 	if config['Flip'] == True:
 			image = cv2.flip(image, 0)
