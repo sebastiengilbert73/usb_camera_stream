@@ -49,16 +49,6 @@ app = Flask(__name__)
 
 config = ExtractConfig("./service_config.xml")
 
-#video_stream = PiVideoStream(resolution=config['Resolution'], framerate=config['VideoFrameRate']).start()
-#capture_is_opened = False
-#valid_camera_indices = ValidUSBCameraIndices()
-#print(f"valid_camera_indices = {valid_camera_indices}")
-"""capture = None
-while not capture_is_opened:
-	capture = cv2.VideoCapture(2)#valid_camera_indices[0])
-	capture_is_opened = capture.isOpened()
-	print(f"capture_is_opened = {capture_is_opened}")
-"""
 valid_camera_paths = ValidUSBCameraPaths()
 print(f"valid_camera_paths = {valid_camera_paths}")
 capture = cv2.VideoCapture(valid_camera_paths[config['CameraID']])
